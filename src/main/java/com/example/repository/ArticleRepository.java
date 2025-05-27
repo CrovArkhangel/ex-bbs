@@ -1,10 +1,14 @@
 package com.example.repository;
 
 import com.example.domain.Article;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,6 +16,7 @@ import java.util.List;
  * articlesテーブルを操作するリポジトリーです.
  */
 @Repository
+@Transactional
 public class ArticleRepository {
     @Autowired
     private NamedParameterJdbcTemplate template;
@@ -34,5 +39,18 @@ public class ArticleRepository {
                 select id, name, content from articles order by id desc;
                 """;
         return template.query(sql, ARTICLE_ROW_MAPPER);
+    }
+
+    /**
+     * 記事情報を登録する.
+     *
+     * @param article 登録する記事情報
+     */
+    public void create(Article article){
+        SqlParameterSource param = new BeanPropertySqlParameterSource(article);
+        String sql = """
+                insert into articles(name, content) values(:name, :content);
+                """;
+        template.update(sql, param);
     }
 }
