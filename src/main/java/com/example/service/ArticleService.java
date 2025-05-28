@@ -1,7 +1,6 @@
 package com.example.service;
 
 import com.example.domain.Article;
-import com.example.domain.Thread;
 import com.example.repository.ArticleRepository;
 import com.example.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +25,15 @@ public class ArticleService {
      *
      * @return 記事とそれに紐づくコメントのリスト
      */
-    public List<Thread> showList(){
-        List<Article> articleList = articleRepository.findAll();
-        List<Thread> threadList = new ArrayList<>();
-        for (Article article: articleList){
-            Thread thread = new Thread();
-            thread.setArticleId(article.getId());
-            thread.setArticleName(article.getName());
-            thread.setArticleContent(article.getContent());
-            thread.setCommentList(commentRepository.findByArticleId(article.getId()));
-            threadList.add(thread);
+    public List<Article> showList(){
+        List<Article> articles = articleRepository.findAll();
+        List<Article> articleList = new ArrayList<>();
+        /* それぞれの記事に対して、対応するコメントリストをセットする */
+        for (Article article: articles){
+            article.setCommentList(commentRepository.findByArticleId(article.getId()));
+            articleList.add(article);
         }
-        return threadList;
+        return articleList;
     }
 
 }

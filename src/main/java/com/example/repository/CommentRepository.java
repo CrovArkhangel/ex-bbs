@@ -3,6 +3,7 @@ package com.example.repository;
 import com.example.domain.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -41,5 +42,18 @@ public class CommentRepository {
                 """;
         SqlParameterSource param = new MapSqlParameterSource().addValue("articleId", articleId);
         return template.query(sql, param, COMMENT_ROW_MAPPER);
+    }
+
+    /**
+     * コメントを投稿する.
+     *
+     * @param comment 投稿するコメント情報
+     */
+    public void insertComment(Comment comment){
+        SqlParameterSource param = new BeanPropertySqlParameterSource(comment);
+        String sql = """
+                insert into comments(name, content, article_id) values(:name, :content, :articleId);
+                """;
+        template.update(sql, param);
     }
 }
