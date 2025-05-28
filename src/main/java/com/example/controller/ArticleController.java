@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -70,6 +71,18 @@ public class ArticleController {
         Comment comment = new Comment();
         BeanUtils.copyProperties(form, comment);
         commentRepository.insertComment(comment);
+        return "redirect:/bbs";
+    }
+
+    /**
+     * 記事と関連するコメントを削除
+     *
+     * @param articleId 記事Id
+     * @return 記事投稿画面
+     */
+    @GetMapping("/delete/{articleId}")
+    public String delete(@PathVariable Integer articleId){
+        articleRepository.deleteArticleAndComment(articleId);
         return "redirect:/bbs";
     }
 }

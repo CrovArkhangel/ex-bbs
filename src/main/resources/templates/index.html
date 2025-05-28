@@ -21,7 +21,9 @@
                     <span>投稿内容：</span><br>
                     <span th:text="${article.content}"></span><br>
                 </div>
-                <button class="btn-delete">記事削除</button><br>
+                <a th:href="@{'/bbs/delete/' + ${article.id}}">
+                    <button class="btn-delete">記事削除</button><br>
+                </a>
                 <strong>コメント投稿</strong>
                 <form method="post" th:action="@{/bbs/commentPost}" th:object="${createCommentForm}" class="comment-form">
                     <input type="hidden" name="articleId" th:value="${article.id}">

@@ -4,6 +4,7 @@ import com.example.domain.Article;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -49,6 +50,20 @@ public class ArticleRepository {
         SqlParameterSource param = new BeanPropertySqlParameterSource(article);
         String sql = """
                 insert into articles(name, content) values(:name, :content);
+                """;
+        template.update(sql, param);
+    }
+
+    /**
+     * 記事とそれに紐づくコメントを削除する.
+     *
+     * @param articleId 削除する記事id
+     */
+    public void deleteArticleAndComment(Integer articleId){
+        SqlParameterSource param = new MapSqlParameterSource().addValue("articleId", articleId);
+        String sql = """
+                DELETE FROM comments WHERE article_id = :articleId;
+                DELETE FROM articles WHERE id = :articleId;
                 """;
         template.update(sql, param);
     }
