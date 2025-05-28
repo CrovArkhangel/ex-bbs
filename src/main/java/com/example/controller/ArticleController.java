@@ -42,6 +42,7 @@ public class ArticleController {
     @GetMapping("")
     public String index(CreateArticleForm createArticleForm, CreateCommentForm createCommentForm, Model model){
         List<Article> articleList = articleService.showList();
+        System.out.println(articleList);
         model.addAttribute("articleList", articleList);
         return "index";
     }
@@ -82,7 +83,7 @@ public class ArticleController {
      */
     @GetMapping("/delete/{articleId}")
     public String delete(@PathVariable Integer articleId){
-        articleRepository.deleteArticleAndComment(articleId);
+        articleService.deleteArticleAndComment(articleId);
         return "redirect:/bbs";
     }
 }
