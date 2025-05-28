@@ -1,7 +1,6 @@
 package com.example.repository;
 
 import com.example.domain.Article;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -53,4 +52,6 @@ public class ArticleRepository {
                 """;
         template.update(sql, param);
     }
+
+//    結合のSQL:select * from articles join comments on articles.id = comments.article_id order by articles.id;
 }
