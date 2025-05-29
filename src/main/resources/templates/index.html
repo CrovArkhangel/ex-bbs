@@ -27,13 +27,28 @@
                 <strong>コメント投稿</strong>
                 <form method="post" th:action="@{/bbs/commentPost}" th:object="${createCommentForm}" class="comment-form">
                     <input type="hidden" name="articleId" th:value="${article.id}">
-                    <label for="commentName">
+                    <div th:if="${createCommentForm.articleId} == ${article.id}" th:errors="*{name}" style="color:red"></div>
+                    <label th:for="'commentName' + ${article.id}">
                         投稿者名<br>
-                        <input type="text" id="commentName" name="name" th:field="*{name}" class="input-text">
+                        <!-- バリデーション対象の記事には入力内容を保持 -->
+                        <input type="text" th:id="'commentName' + ${article.id}" th:if="${createCommentForm.articleId} == ${article.id}"
+                               th:field="*{name}" class="input-text"/>
+
+                        <!-- それ以外の記事には空のフィールドを出す -->
+                        <input type="text" th:id="'commentName' + ${article.id}" th:unless="${createCommentForm.articleId} == ${article.id}"
+                               name="name" class="input-text"/>
+                        <br>
+<!--                        <input type="text" id="commentName" name="name" th:field="*{name}" class="input-text">-->
                     </label><br>
-                    <label for="commentContent">
+                    <div th:if="${createCommentForm.articleId} == ${article.id}" th:errors="*{content}" style="color:red"></div>
+                    <label th:for="'commentContent' + ${article.id}">
                         コメント内容<br>
-                        <textarea id="commentContent" name="content" rows="3" cols="100" th:field="*{content}" class="textarea"></textarea><br>
+                        <textarea th:if="${createCommentForm.articleId} == ${article.id}" th:id="'commentContent' + ${article.id}"
+                                  th:field="*{content}" rows="3" cols="100" class="textarea"></textarea>
+
+                        <textarea th:unless="${createCommentForm.articleId} == ${article.id}" th:id="'commentContent' + ${article.id}"
+                                  name="content" rows="3" cols="100" class="textarea"></textarea>
+                        <br>
                     </label>
                     <button type="submit" class="btn">投稿</button>
                 </form>
@@ -54,13 +69,15 @@
             <div class="post-area">
                 <h3>記事投稿</h3>
                 <form method="post" th:action="@{/bbs/articlePost}" th:object="${createArticleForm}" class="article-form">
+                    <div th:errors="*{articleName}" style="color:red"></div>
                     <label for="name">
                         投稿者名<br>
-                        <input type="text" id="name" name="name" th:field="*{name}" class="input-text">
+                        <input type="text" id="name" name="articleName" th:field="*{articleName}" class="input-text">
                     </label>
+                    <div th:errors="*{articleContent}" style="color:red"></div>
                     <label for="content">
                         記事内容<br>
-                        <textarea id="content" name="content" th:field="*{content}" rows="7" cols="30" class="textarea"></textarea><br>
+                        <textarea id="content" name="articleContent" th:field="*{articleContent}" rows="7" cols="30" class="textarea"></textarea><br>
                     </label>
                     <button type="submit" class="btn">記事投稿</button>
                 </form>

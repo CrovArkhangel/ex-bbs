@@ -49,18 +49,6 @@ public class ArticleRepository {
                 rs.getObject("article_id", Integer.class)
             );
 
-//    /**
-//     * 全記事情報を取得する.
-//     *
-//     * @return 全記事情報
-//     */
-//    public List<Article> findAll(){
-//        String sql = """
-//                select id, name, content from articles order by id desc;
-//                """;
-//        return template.query(sql, ARTICLE_ROW_MAPPER);
-//    }
-
     /**
      * 全記事情報とそれに紐づくコメントを取得する.
      *
@@ -100,6 +88,4 @@ public class ArticleRepository {
                 """;
         template.update(sql, param);
     }
-
-//    結合のSQL:select * from articles join comments on articles.id = comments.article_id order by articles.id;
 }

@@ -11,6 +11,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +44,6 @@ public class ArticleController {
     @GetMapping("")
     public String index(CreateArticleForm createArticleForm, CreateCommentForm createCommentForm, Model model){
         List<Article> articleList = articleService.showList();
-        System.out.println(articleList);
         model.addAttribute("articleList", articleList);
         return "index";
     }
@@ -50,13 +51,23 @@ public class ArticleController {
     /**
      * 記事を投稿する.
      *
-     * @param form フォーム
+     * @param createArticleForm 記事投稿フォーム
+     * @param createArticleResult バリデーション結果
+     * @param createCommentForm コメント投稿フォーム
+     * @param model モデル
      * @return 記事投稿画面
      */
     @PostMapping("/articlePost")
-    public String articlePost(CreateArticleForm form){
+    public String articlePost(@Validated CreateArticleForm createArticleForm, BindingResult createArticleResult, CreateCommentForm createCommentForm, Model model){
+        if (createArticleResult.hasErrors()) {
+            List<Article> articleList = articleService.showList();
+            model.addAttribute("articleList", articleList);
+            model.addAttribute("createCommentForm", createCommentForm);
+            return "index"; // エラーメッセージ表示用のビュー
+        }
         Article article = new Article();
-        BeanUtils.copyProperties(form, article);
+        article.setName(createArticleForm.getArticleName());
+        article.setContent(createArticleForm.getArticleContent());
         articleRepository.create(article);
         return "redirect:/bbs";
     }
@@ -64,13 +75,22 @@ public class ArticleController {
     /**
      * コメントを投稿する.
      *
-     * @param form フォーム
+     * @param createCommentForm コメント投稿用フォーム
+     * @param createCommentResult バリデーション結果
+     * @param createArticleForm 記事投稿フォーム
+     * @param model モデル
      * @return 記事投稿画面
      */
     @PostMapping("/commentPost")
-    public String commentPost(CreateCommentForm form){
+    public String commentPost(@Validated CreateCommentForm createCommentForm, BindingResult createCommentResult, CreateArticleForm createArticleForm, Model model){
+        if (createCommentResult.hasErrors()) {
+            List<Article> articleList = articleService.showList();
+            model.addAttribute("articleList", articleList);
+            model.addAttribute("createArticleForm", createArticleForm);
+            return "index"; // エラーメッセージ表示用のビュー
+        }
         Comment comment = new Comment();
-        BeanUtils.copyProperties(form, comment);
+        BeanUtils.copyProperties(createCommentForm, comment);
         commentRepository.insertComment(comment);
         return "redirect:/bbs";
     }

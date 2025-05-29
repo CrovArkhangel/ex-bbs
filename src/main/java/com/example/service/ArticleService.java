@@ -60,8 +60,12 @@ public class ArticleService {
         return new ArrayList<>(articleMap.values());
     }
 
+    /**
+     * 記事とそれに紐づくコメントを一括削除する.
+     *
+     * @param id 記事Id
+     */
     public void deleteArticleAndComment(Integer id){
-        commentRepository.deleteComment(id);
         articleRepository.deleteArticle(id);
     }
 }
