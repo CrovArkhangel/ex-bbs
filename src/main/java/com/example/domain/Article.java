@@ -1,19 +1,27 @@
 package com.example.domain;
 
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 記事を表すドメインクラスです.
  */
+@Entity
+@Table(name = "articles")
 public class Article {
     /** id */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     /** 名前 */
     private String name;
     /** 記事内容 */
     private String content;
     /** 紐づくコメントリスト */
-    private List<Comment> commentList;
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
 
     @Override
     public String toString() {

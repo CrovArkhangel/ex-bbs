@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 記事情報を操作するコントローラーです.
@@ -26,14 +27,16 @@ import java.util.List;
 @Controller
 @RequestMapping("/bbs")
 public class ArticleController {
-    @Autowired
-    private ArticleRepository articleRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
+    private final ArticleRepository articleRepository;
 
     @Autowired
     private ArticleService articleService;
+
+    public ArticleController(CommentRepository commentRepository, ArticleRepository articleRepository) {
+        this.commentRepository = commentRepository;
+        this.articleRepository = articleRepository;
+    }
 
     /**
      * 記事投稿画面に遷移する.
@@ -68,7 +71,7 @@ public class ArticleController {
         Article article = new Article();
         article.setName(createArticleForm.getArticleName());
         article.setContent(createArticleForm.getArticleContent());
-        articleRepository.create(article);
+        articleRepository.save(article);
         return "redirect:/bbs";
     }
 
@@ -91,7 +94,12 @@ public class ArticleController {
         }
         Comment comment = new Comment();
         BeanUtils.copyProperties(createCommentForm, comment);
-        commentRepository.insertComment(comment);
+        System.out.println(createCommentForm);
+        Optional<Article> optionalArticle = articleRepository.findById(createCommentForm.getArticleId());
+        optionalArticle.ifPresent(
+                comment::setArticle
+        );
+        commentRepository.save(comment);
         return "redirect:/bbs";
     }
 
